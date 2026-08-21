@@ -40,9 +40,7 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      # TODO: 기존 Settings 테스트의 axios mock을 별도 PR에서 수정한 뒤 제거한다.
-      - name: Test (advisory)
-        continue-on-error: true
+      - name: Test
         run: npm test -- --run
 
       - name: Build
