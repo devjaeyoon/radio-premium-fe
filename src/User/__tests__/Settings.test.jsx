@@ -6,22 +6,26 @@ import {
   within,
 } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import axios from "axios";
 import { MemoryRouter } from "react-router-dom";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 import { useChannelStore } from "@/Channel/stores/useChannelStore";
+import axiosInstance from "@/shared/services/axiosInstance";
 import Settings from "@/User/components/Settings";
 import { SETTING_TYPES } from "@/User/constants/settingOptions";
 import useUpdateSetting from "@/User/hooks/useUpdateSetting";
 import { useUserSettingsStore } from "@/User/stores/useUserSettingsStore";
 
-vi.mock("axios");
+vi.mock("@/shared/services/axiosInstance", () => ({
+  default: {
+    patch: vi.fn(),
+  },
+}));
 
 describe("UserSetting", () => {
   beforeEach(() => {
     vi.spyOn(window.localStorage.__proto__, "getItem").mockReturnValue("1");
-    axios.patch.mockResolvedValue({});
+    axiosInstance.patch.mockResolvedValue({});
   });
 
   it("광고 감지 설정이 false일 경우, useUpdateSetting을 호출하면 설정을 true로 변경한다", async () => {
