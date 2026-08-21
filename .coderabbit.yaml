@@ -1,0 +1,71 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+language: "ko-KR"
+tone_instructions: "중요도와 근거를 먼저 설명하고, 자동 포매터가 처리할 사소한 스타일 지적은 최소화한다."
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: true
+  high_level_summary: true
+  review_details: true
+  suggested_reviewers: false
+  in_progress_fortune: false
+  poem: false
+
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "dev"
+
+  path_instructions:
+    - path: "src/User/**"
+      instructions: |
+        - 사용자 ID는 하나의 세션 소유자에서 생성·복구되어야 한다.
+        - null 또는 잘못된 storage 값을 숫자 0으로 변환하지 않는지 확인한다.
+        - Strict Mode와 여러 hook 인스턴스에서 사용자 생성 요청이 중복되지 않는지 확인한다.
+        - 사용자 변경 시 이전 사용자의 설정과 즐겨찾기가 남지 않는지 확인한다.
+
+    - path: "src/Playback/**"
+      instructions: |
+        - media와 HLS 자원의 생성, 재생, 중지, 채널 전환, unmount cleanup을 확인한다.
+        - play Promise가 성공하기 전에 UI를 재생 중으로 표시하지 않는지 확인한다.
+        - 중지 이후 도착한 오래된 callback이 재생을 되살리지 않는지 확인한다.
+        - Whisper 작업 시작·중지 실패가 호출자와 UI에 전달되는지 확인한다.
+
+    - path: "src/Channel/**"
+      instructions: |
+        - 채널 전환 실패 시 이전 재생 상태를 보존하거나 rollback하는지 확인한다.
+        - 즐겨찾기와 순서 변경의 동시 요청, pending 상태, 실패 rollback을 확인한다.
+        - 서버에서 가져온 데이터와 임시 UI 상태의 소유권이 섞이지 않는지 확인한다.
+
+    - path: "src/AdReport/**"
+      instructions: |
+        - 제보 실패가 성공 UI, modal 닫기, 채널 이동으로 이어지지 않는지 확인한다.
+        - 중복 제출 방지와 사용자 입력 보존 여부를 확인한다.
+
+    - path: "src/shared/services/**"
+      instructions: |
+        - HTTP와 socket 실패가 성공 값으로 변환되거나 무시되지 않는지 확인한다.
+        - timeout, 입력 payload, 응답 schema와 FE-BE 이벤트 계약의 호환성을 확인한다.
+        - 로그나 오류 메시지에 비밀값 또는 개인정보가 노출되지 않는지 확인한다.
+
+    - path: "src/**/*.{test,spec}.{js,jsx}"
+      instructions: |
+        - 성공 경로뿐 아니라 실패, 경쟁 상태, cleanup과 회귀 시나리오를 검증하는지 확인한다.
+        - 구현을 과도하게 mock하여 실제 사용자 동작을 보호하지 못하는 테스트를 지적한다.
+        - 테스트 이름이 조건과 기대 결과를 명확히 설명하는지 확인한다.
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+  learnings:
+    scope: "local"
+  issues:
+    scope: "local"
+  pull_requests:
+    scope: "local"
+
+chat:
+  art: false
+  auto_reply: true
